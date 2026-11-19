@@ -1,0 +1,59 @@
+{
+  "contract": "docs/design-audit.md: preserve time geometry, reduce header density, warm surfaces, readable overlapping tasks",
+  "targetViewports": [
+    "1440x900",
+    "768x1024",
+    "390x844"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Existing automated axe scenario passed after contrast corrections; keyboard/pointer scenarios passed. No screen reader audit."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Actual screenshots inspected at three widths; no horizontal overflow."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Existing role=status loading captured in final-loading.png."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "Archive empty state captured."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "Existing failed save and stale version E2E scenarios passed."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Existing accessibility scenario exercises partial planning reasons."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Scheduling, persistence, completion E2E passed."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Real account authentication and isolated demos E2E passed."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "1440x900",
+      "artifact": "final-1440.png",
+      "observation": "Rendered isolated demo with overlapping tasks; readable layout without horizontal overflow."
+    },
+    {
+      "viewport": "768x1024",
+      "artifact": "final-768.png",
+      "observation": "Rendered isolated demo with overlapping tasks; readable layout without horizontal overflow."
+    },
+    {
+      "viewport": "390x844",
+      "artifact": "final-390.png",
+      "observation": "Rendered isolated demo with overlapping tasks; readable layout without horizontal overflow."
+    }
+  ]
+}

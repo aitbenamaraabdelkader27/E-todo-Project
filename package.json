@@ -1,0 +1,80 @@
+{
+  "name": "e-todo-flow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:web": "vite --host 0.0.0.0",
+    "dev:server": "tsx watch --env-file-if-exists=.env server/index.ts",
+    "build": "tsc --noEmit && vite build && tsup server/index.ts --format esm --platform node --target node22 --out-dir dist-server --no-splitting",
+    "start": "NODE_ENV=production node --env-file-if-exists=.env dist-server/index.js",
+    "start:render": "sh scripts/start-render.sh",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write src server shared tests *.ts *.js *.json",
+    "format:check": "prettier --check src server shared tests *.ts *.js *.json",
+    "test": "node --env-file-if-exists=.env node_modules/vitest/vitest.mjs run",
+    "test:unit": "vitest run tests/scheduler.test.ts tests/time.test.ts tests/overlap.test.ts",
+    "test:api": "node --env-file-if-exists=.env node_modules/vitest/vitest.mjs run tests/api.test.ts",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
+    "@prisma/client": "6.19.2",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "lucide-react": "^0.468.0",
+    "motion": "^12.23.24",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.56.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.5",
+    "@types/node": "^22.19.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/supertest": "^6.0.3",
+    "@vitejs/plugin-react": "^5.1.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.14.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.5.0",
+    "jsdom": "^27.1.0",
+    "prettier": "^3.9.10",
+    "prisma": "6.19.2",
+    "supertest": "^7.1.4",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^7.2.2",
+    "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "@prisma/config": {
+      "deepmerge-ts": "^8.0.0",
+      "effect": "^3.20.0"
+    },
+    "minimatch": "^11.0.1",
+    "esbuild": "^0.28.1"
+  }
+}

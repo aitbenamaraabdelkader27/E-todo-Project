@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: flow
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-flow_local_password}
+      POSTGRES_DB: flow
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - flow_pgdata:/var/lib/postgresql/data
+      - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/10-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+  app:
+    build: .
+    init: true
+    environment:
+      DATABASE_URL: postgresql://flow:${POSTGRES_PASSWORD:-flow_local_password}@db:5432/flow?schema=public
+      APP_ORIGIN: ${DOCKER_APP_ORIGIN:-http://localhost:8080}
+      NODE_ENV: production
+      PORT: "3001"
+      # Local HTTP only. Set true when serving through HTTPS.
+      COOKIE_SECURE: ${DOCKER_COOKIE_SECURE:-false}
+    ports:
+      - "127.0.0.1:8080:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+volumes:
+  flow_pgdata:

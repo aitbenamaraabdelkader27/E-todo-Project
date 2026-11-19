@@ -1,0 +1,26 @@
+{
+  "contract": "E-Todo Flow : comprendre sa journée, capturer une tâche et organiser l’Inbox autour des engagements existants. Action principale : créer puis planifier. Desktop : navigation discrète, timeline centrale, Inbox simultanément visible. Mobile : navigation repliée, bascule Timeline/Inbox, édition accessible sans glisser. Les positions et hauteurs suivent le temps réel ; l’état confirmé provient de PostgreSQL. Cibles 1440x900 et 390x844, clavier et réduction des animations.",
+  "targetViewports": ["1440x900", "390x844"],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "11 surfaces passent axe WCAG 2 A/AA et 2.1 AA sans violation détectée (a11y-report.json). Playwright vérifie autofocus du titre, navigation clavier, Échap, retour au déclencheur, déplacement/redimensionnement par flèches, placement mobile et reduced-motion. Contrastes ajustés puis réaudit exécuté. Ces contrôles automatisés ne constituent pas une certification exhaustive."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Captures réelles 1440x900 et 390x844 examinées. Absence de débordement horizontal vérifiée dans Playwright. Navigation mobile masquée hors ouverture, bascule des panneaux et titres de blocs sur deux lignes. Les chevauchements conservent leurs heures exactes et restent éditables par formulaire sur mobile."
+  },
+  "contentStates": {
+    "loading": { "status": "pass", "evidence": "GET session retenu temporairement par le test : indicateur de chargement visible, puis accueil après réponse. Capture loading-session.png." },
+    "empty": { "status": "pass", "evidence": "Navigation vers une journée sans plans : état vide et action de création disponibles. Comptes réels neufs sans données de démonstration. Capture empty-day.png." },
+    "error": { "status": "pass", "evidence": "Échec PATCH 503 injecté : dialogue et brouillon conservés, erreur explicite ; retrait de la panne et sauvegarde réussie. Conflit 409 réel entre onglets : version récente relue après action explicite. Captures save-error.png et concurrent-edit-recovery.png." },
+    "partial": { "status": "pass", "evidence": "Disponibilité limitée à 09:00–10:00 : deux tâches réellement planifiées, deux conservées dans l’Inbox avec raisons, sans déplacer les engagements existants. Vérification navigateur et capture partial-planning.png." },
+    "success": { "status": "pass", "evidence": "Création, édition, planification, déplacement, redimensionnement et réalisation vérifiés par relecture de session/API PostgreSQL, y compris après rechargement. Capture completed-task.png." },
+    "permission": { "status": "pass", "evidence": "Accès anonyme 401, origine et CSRF invalides 403 vérifiés par Supertest ; données inter-utilisateurs protégées. Parcours inscription/déconnexion/reconnexion et deux démos indépendantes vérifiés dans Chromium." }
+  },
+  "renderedEvidence": [
+    { "viewport": "1440x900", "artifact": "desktop-1440x900.png", "observation": "Journée de démonstration réelle : timeline avec activité passive parallèle, événement fixe, Inbox et navigation ; espaces et contenu examinés." },
+    { "viewport": "390x844", "artifact": "mobile-390x844.png", "observation": "Même démo dans un contexte mobile/tactile à mouvements réduits ; bascule des panneaux, titres sur deux lignes et formulaire de placement vérifiés." },
+    { "viewport": "1440x900", "artifact": "welcome-1440x900.png", "observation": "Accueil réel avec choix démo privée ou inscription, police Inter locale et hiérarchie calme." },
+    { "viewport": "1440x900", "artifact": "partial-planning.png", "observation": "Résultat partiel persistant : tâches placées et raisons d’échec conservées dans l’Inbox." }
+  ]
+}

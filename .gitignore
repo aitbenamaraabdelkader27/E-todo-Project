@@ -1,0 +1,12 @@
+node_modules/
+.aws/
+dist/
+dist-server/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+*.log
+.DS_Store
+/docs/  

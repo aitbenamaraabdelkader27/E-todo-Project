@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: e-todo-flow
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start:render
+    healthCheckPath: /healthz
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: SKIP_INSTALL_DEPS
+        value: "true"
+      - key: NODE_VERSION
+        value: "22.x"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false

@@ -1,0 +1,62 @@
+name: Quality
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: flow
+          POSTGRES_PASSWORD: flow_ci_password
+          POSTGRES_DB: flow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U flow -d flow"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgresql://flow:flow_ci_password@localhost:5432/flow?schema=public
+      TEST_DATABASE_URL: postgresql://flow:flow_ci_password@localhost:5432/flow_test?schema=public
+      APP_ORIGIN: http://127.0.0.1:5173
+      NODE_ENV: test
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Prepare databases
+        run: |
+          psql postgresql://flow:flow_ci_password@localhost:5432/flow -c 'CREATE DATABASE flow_test OWNER flow;'
+          DATABASE_URL="$TEST_DATABASE_URL" npm run db:migrate
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Exercise the production build and migrations on local PostgreSQL
+        env:
+          E2E_PRODUCTION: "true"
+          PORT: "5173"
+          COOKIE_SECURE: "false"
+        run: DIRECT_URL="$DATABASE_URL" npm run test:e2e
+      - name: Keep browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failures
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
